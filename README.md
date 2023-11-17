@@ -1,2 +1,2 @@
-# AI_CONNECT4
+# Connect four with AI
 CPSC 481
