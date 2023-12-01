@@ -1,0 +1,82 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+  text-align: center;
+  color: #333;
+}
+
+main {
+  margin-top: 20px;
+}
+
+.game-info,
+.controls {
+  margin-bottom: 30px;
+}
+
+.game-info h2,
+.controls h2 {
+  color: #444;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 5px;
+}
+
+.controls ul {
+  list-style: none;
+  padding: 0;
+}
+
+.controls li {
+  margin-bottom: 5px;
+  color: #666;
+}
+
+footer {
+  text-align: end;
+  color: #888;
+  margin-top: 20px;
+}
+
+#start {
+  text-align: center;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 27px;
+}
+
+a {
+  background:
+    linear-gradient(to right,
+      rgba(100, 200, 200, 1),
+      rgba(100, 200, 200, 1)),
+    linear-gradient(to right,
+      rgba(255, 0, 0, 1),
+      rgba(255, 0, 180, 1),
+      rgba(0, 100, 200, 1));
+  background-size: 100% 3px, 0 3px;
+  background-position: 100% 100%, 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 400ms;
+}
+
+a:hover {
+  background-size: 0 3px, 100% 3px;
+}
