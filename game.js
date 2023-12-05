@@ -38,7 +38,7 @@ function playGame() {
     } else if (AIWins) {
         currentPlayer = 2;
         AIWins = false;
-        //computerMove();
+        computerMove();
     } else {
         currentPlayer = 1;
     }
@@ -163,7 +163,7 @@ function handleClick(e) {
             gameOver();
         } else {
             currentPlayer = currentPlayer === 1 ? 2 : 1;
-            //setTimeout(computerMove, 100);
+            setTimeout(computerMove, 100);
         }
     }
 }
