@@ -6,6 +6,10 @@ let playerWins = false;
 let AIWins = false;
 const body = document.body
 const table = document.createElement('table');
+const resultTable = document.createElement('table');
+const resetBtn = document.createElement('button');
+const menuBtn = document.createElement('a');
+const winText = document.createElement('h2');
 
 function createTable() {
     body.append(table);
@@ -101,15 +105,6 @@ function checkDraw() {
     return true; // If no empty cells found, it's a draw
 }
 
-const resultTable = document.createElement('table');
-const resetBtn = document.createElement('button');
-const menuBtn = document.createElement('a');
-const winText = document.createElement('h2');
-resultTable.className = 'result';
-resetBtn.innerHTML = 'Play Again';
-menuBtn.href = 'index.html';
-menuBtn.innerHTML = 'Main Menu';
-
 function computerMove() {
     if (currentPlayer === 2) {
         const availableCols = [];
@@ -169,6 +164,10 @@ function handleClick(e) {
 }
 
 function gameOver() {
+    resultTable.className = 'result';
+    resetBtn.innerHTML = 'Play Again';
+    menuBtn.href = 'index.html';
+    menuBtn.innerHTML = 'Main Menu';
     currentPlayer = 0; // game ends
     const header = document.querySelector('h1');
     header.after(resultTable);
