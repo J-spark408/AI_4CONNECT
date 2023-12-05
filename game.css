@@ -44,11 +44,13 @@ col.hover {
 .player1 {
     background-color: red;
     border: none;
+    animation: drop 0.3s linear;
 }
 
 .player2 {
     background-color: yellow;
     border: none;
+    animation: drop 0.3s linear;
 }
 
 button,
@@ -86,5 +88,15 @@ a {
 
     100% {
         transform: rotate(0deg);
+    }
+}
+
+@keyframes drop {
+    0% {
+        transform: translateY(-800px);
+    }
+
+    100% {
+        transform: translateY(0px);
     }
 }
