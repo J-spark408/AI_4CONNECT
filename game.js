@@ -107,7 +107,7 @@ const menuBtn = document.createElement('a');
 const winText = document.createElement('h2');
 resultTable.className = 'result';
 resetBtn.innerHTML = 'Play Again';
-menuBtn.href = 'menu.html';
+menuBtn.href = 'index.html';
 menuBtn.innerHTML = 'Main Menu';
 
 function computerMove() {
