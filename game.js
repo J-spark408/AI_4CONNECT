@@ -428,3 +428,4 @@ function gameOver() {
 createTable();
 table.addEventListener('click', handleClick);
 resetBtn.addEventListener('click', clearBoard);
+document.addEventListener("contextmenu", e => e.preventDefault(), false);
