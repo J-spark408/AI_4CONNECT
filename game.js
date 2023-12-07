@@ -363,6 +363,7 @@ function computerMove() {
     }
 }
 
+// check winning condition for player or computer moves
 function winCondition() {
     if (checkWinner()) {
         if (currentPlayer === 1) {
@@ -391,7 +392,15 @@ function winCondition() {
         }
     }
 }
-
+// remove game over button options when new game is starting
+function removeOption() {
+    resultTable.removeChild(resetBtn);
+    resultTable.removeChild(menuBtn);
+    resultTable.removeChild(winText);
+    body.removeChild(resultTable);
+    playGame();
+}
+// clearing the board when new game is starting
 function clearBoard() {
     gameBoard = [];
     for (let row = 0; row < ROWS; row++) {
@@ -404,21 +413,13 @@ function clearBoard() {
     }
     removeOption();
 }
-
-function removeOption() {
-    resultTable.removeChild(resetBtn);
-    resultTable.removeChild(menuBtn);
-    resultTable.removeChild(winText);
-    body.removeChild(resultTable);
-    playGame();
-}
-
+// Display buttons to play again or direct to main menu
 function gameOver() {
     resultTable.className = 'result';
     resetBtn.innerHTML = 'Play Again';
     menuBtn.href = 'index.html';
     menuBtn.innerHTML = 'Main Menu';
-    currentPlayer = 0; // game ends
+    currentPlayer = 0;
     const header = document.querySelector('h1');
     header.after(resultTable);
     resultTable.append(winText, resetBtn, menuBtn);
