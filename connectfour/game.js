@@ -183,7 +183,7 @@ function updateScore(player, AI) {
     return points;
 }
 
-function getScore() {
+function evaluateState() {
     let score = 0;
 
     // Evaluate horizontally
@@ -309,7 +309,7 @@ function findBestMove(AIFirst) {
 
 function miniMax(depth, isMaximizing, alpha, beta) {
     if (depth === 0 || checkWinner() || checkDraw()) {
-        return getScore();
+        return evaluateState();
     }
     if (isMaximizing) {
         let v = -Infinity;
