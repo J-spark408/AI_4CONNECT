@@ -1,15 +1,23 @@
 const ROWS = 6;
 const COLS = 7;
-let currentPlayer = 1;
+const player = 1;
+const computer = 2;
+let currentPlayer = player;
 let gameBoard = [];
 let playerWins = false;
 let AIWins = false;
+let AIGoFirst = false;
+let maxScore = 100000;
+let depth = 8;
 const body = document.body
 const table = document.createElement('table');
 const resultTable = document.createElement('table');
 const resetBtn = document.createElement('button');
 const menuBtn = document.createElement('a');
 const winText = document.createElement('h2');
+const waitBox = document.createElement('div');
+const waitText = document.createElement('h2');
+
 
 function createTable() {
     body.append(table);
@@ -33,14 +41,18 @@ function createTable() {
     $('td').hover(function () {
         $(this).parents('table').find('col:eq(' + $(this).index() + ')').toggleClass('hover');
     });
+    body.append(waitBox);
+    waitBox.append(waitText);
+    waitText.innerHTML = `Player's turn`;
 }
 
 function playGame() {
     if (playerWins) {
-        currentPlayer = 1;
+        currentPlayer = player;
         playerWins = false;
+        AIGoFirst = false;
     } else if (AIWins) {
-        currentPlayer = 2;
+        currentPlayer = computer;
         AIWins = false;
         computerMove();
     } else {
@@ -60,80 +72,275 @@ function dropPiece(col) {
     return -1;
 }
 
-
-
-function checkWinner(row, col) {
-    function checkDirection(dx, dy) {
-        let count = 1;
-        let r, c;
-
-        r = row + dx;
-        c = col + dy;
-        while (r >= 0 && r < ROWS && c >= 0 && c < COLS && gameBoard[r][c] === currentPlayer) {
-            count++;
-            r += dx;
-            c += dy;
+function checkSpace(col) {
+    for (let row = ROWS - 1; row >= 0; row--) {
+        if (gameBoard[row][col] === 0) {
+            return row;
         }
+    }
+    return -1;
+}
 
-        r = row - dx;
-        c = col - dy;
-        while (r >= 0 && r < ROWS && c >= 0 && c < COLS && gameBoard[r][c] === currentPlayer) {
-            count++;
-            r -= dx;
-            c -= dy;
+function checkWinner() {
+    // Check for a win horizontally
+    for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col <= COLS - 4; col++) {
+            if (
+                gameBoard[row][col] !== 0 &&
+                gameBoard[row][col] === gameBoard[row][col + 1] &&
+                gameBoard[row][col] === gameBoard[row][col + 2] &&
+                gameBoard[row][col] === gameBoard[row][col + 3]
+            ) {
+                return true;
+            }
         }
-
-        return count >= 4;
     }
 
-    return (
-        checkDirection(1, 0) || // vertical
-        checkDirection(0, 1) || // horizontal
-        checkDirection(1, 1) || // diagonal \
-        checkDirection(1, -1)   // diagonal /
-    );
+    // Check for a win vertically
+    for (let col = 0; col < COLS; col++) {
+        for (let row = 0; row <= ROWS - 4; row++) {
+            if (
+                gameBoard[row][col] !== 0 &&
+                gameBoard[row][col] === gameBoard[row + 1][col] &&
+                gameBoard[row][col] === gameBoard[row + 2][col] &&
+                gameBoard[row][col] === gameBoard[row + 3][col]
+            ) {
+                return true;
+            }
+        }
+    }
+
+    // Check for a win diagonally (from bottom-left to top-right)
+    for (let row = 0; row <= ROWS - 4; row++) {
+        for (let col = 0; col <= COLS - 4; col++) {
+            if (
+                gameBoard[row][col] !== 0 &&
+                gameBoard[row][col] === gameBoard[row + 1][col + 1] &&
+                gameBoard[row][col] === gameBoard[row + 2][col + 2] &&
+                gameBoard[row][col] === gameBoard[row + 3][col + 3]
+            ) {
+                return true;
+            }
+        }
+    }
+
+    // Check for a win diagonally (from top-left to bottom-right)
+    for (let col = COLS - 1; col >= COLS - 4; col--) {
+        for (let row = 0; row <= ROWS - 4; row++) {
+            if (
+                gameBoard[row][col] !== 0 &&
+                gameBoard[row][col] === gameBoard[row + 1][col - 1] &&
+                gameBoard[row][col] === gameBoard[row + 2][col - 2] &&
+                gameBoard[row][col] === gameBoard[row + 3][col - 3]
+            ) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 function checkDraw() {
     for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLS; col++) {
             if (gameBoard[row][col] === 0) {
-                return false; // If any cell is empty, the game is not a draw
+                return false; // If any cell is available, the game is not a draw
             }
         }
     }
     return true; // If no empty cells found, it's a draw
 }
 
-function computerMove() {
-    if (currentPlayer === 2) {
-        const availableCols = [];
+function updateScore(player, AI) {
+    let points = 0;
+    switch (player) {
+        case 4:
+            points += maxScore;
+            break;
+        case 3:
+            points += 10;
+            break;
+        case 2:
+            points += 1;
+            break;
+        default:
+            break
+    }
+    switch (AI) {
+        case 4:
+            points -= maxScore;
+            break;
+        case 3:
+            points -= 10;
+            break;
+        case 2:
+            points -= 1;
+            break;
+        default:
+            break
+    }
+    return points;
+}
+
+function getScore() {
+    let score = 0;
+
+    // Evaluate horizontally
+    for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col <= COLS - 3; col++) {
+            let player = 0;
+            let AI = 0;
+            for (let i = col; i < col + 4; i++) {
+                if (gameBoard[row][i] == 1) {
+                    player++;
+                    AI = 0;
+                } else if (gameBoard[row][i] == 2) {
+                    AI++;
+                    player = 0;
+                }
+            }
+            score += updateScore(player, AI);
+            if (score <= -maxScore || score >= maxScore) {
+                return score;
+            }
+        }
+    }
+    // Evaluate vertically
+    for (let col = 0; col < COLS; col++) {
+        for (let row = 0; row <= ROWS - 4; row++) {
+            let player = 0;
+            let AI = 0;
+            for (let i = 0; i < 4; i++) {
+                if (gameBoard[row + i][col] == 1) {
+                    player++;
+                    AI = 0;
+                } else if (gameBoard[row + i][col] == 2) {
+                    AI++;
+                    player = 0;
+                }
+            }
+            score += updateScore(player, AI);
+            if (score <= -maxScore || score >= maxScore) {
+                return score;
+            }
+        }
+    }
+
+    // Evaluate diagonally (from bottom-left to top-right)
+    for (let row = 0; row <= ROWS - 4; row++) {
+        for (let col = 0; col <= COLS - 4; col++) {
+            let player = 0;
+            let AI = 0;
+            for (let i = row; i < row + 4; i++) {
+                if (gameBoard[i][(i - row) + col] == 1) {
+                    player++;
+                    AI = 0;
+                } else if (gameBoard[i][(i - row) + col] == 2) {
+                    AI++;
+                    player = 0;
+                }
+            }
+            score += updateScore(player, AI);
+            if (score <= -maxScore || score >= maxScore) {
+                return score;
+            }
+        }
+    }
+
+    // Evaluate diagonally (from top-left to bottom-right)
+    for (let col = COLS - 1; col >= COLS - 4; col--) {
+        for (let row = 0; row <= ROWS - 4; row++) {
+            let player = 0;
+            let AI = 0;
+            for (let i = row; i < row + 4; i++) {
+                if (gameBoard[i][col - (i - row)] == 1) {
+                    player++;
+                    AI = 0;
+                } else if (gameBoard[i][col - (i - row)] == 2) {
+                    AI++;
+                    player = 0;
+                }
+            }
+            score += updateScore(player, AI);
+            if (score <= -maxScore || score >= maxScore) {
+                return score;
+            }
+        }
+    }
+    return score;
+}
+
+function findBestMove(AIFirst) {
+    var bestEval;
+    var move = null;
+    if (AIFirst) {
+        bestEval = Infinity;
+    } else {
+        bestEval = -Infinity;
+    }
+
+    for (let col = 0; col < COLS; col++) {
+        if (gameBoard[0][col] == 0) {
+            let row = checkSpace(col);
+            if (AIFirst) {
+                gameBoard[row][col] = computer;
+                let eval = miniMax(depth, true, -Infinity, Infinity);
+                gameBoard[row][col] = 0;
+                if (eval < bestEval) {
+                    bestEval = eval;
+                    move = col;
+                }
+            }
+            if (!AIFirst) {
+                gameBoard[row][col] = player;
+                let eval = miniMax(depth, false, -Infinity, Infinity);
+                gameBoard[row][col] = 0;
+                if (eval > bestEval) {
+                    bestEval = eval;
+                    move = col;
+                }
+            }
+        }
+    }
+    currentPlayer = computer;
+    return move;
+}
+
+function miniMax(depth, isMaximizing, alpha, beta) {
+    if (depth === 0 || checkWinner() || checkDraw()) {
+        return getScore();
+    }
+    if (isMaximizing) {
+        let v = -Infinity;
         for (let col = 0; col < COLS; col++) {
             if (gameBoard[0][col] === 0) {
-                availableCols.push(col);
-            }
-        }
-
-        const randomCol = availableCols[Math.floor(Math.random() * availableCols.length)];
-        const row = dropPiece(randomCol);
-
-        if (row !== -1) {
-            if (checkWinner(row, randomCol)) {
-                if (currentPlayer === 1) {
-                    winText.innerHTML = "Player Wins!";
-                    playerWins = true;
-                } else {
-                    winText.innerHTML = "AI Wins!";
-                    AIWins = true;
+                const row = checkSpace(col);
+                gameBoard[row][col] = 1;
+                v = Math.max(v, miniMax(depth - 1, false, alpha, beta));
+                gameBoard[row][col] = 0;
+                if (v >= beta) {
+                    return v;
                 }
-                gameOver();
-            } else if (checkDraw()) {
-                winText.innerHTML = "It's a draw";
-                gameOver();
-            } else {
-                currentPlayer = 1; // switch back to human player
+                alpha = Math.max(alpha, v);
             }
         }
+        return v;
+    } else {
+        let v = Infinity;
+        for (let col = 0; col < COLS; col++) {
+            if (gameBoard[0][col] === 0) {
+                const row = checkSpace(col);
+                gameBoard[row][col] = 2;
+                v = Math.min(v, miniMax(depth - 1, true, alpha, beta));
+                gameBoard[row][col] = 0;
+                if (v <= alpha) {
+                    return v;
+                }
+                beta = Math.min(beta, v);
+            }
+        }
+        return v;
     }
 }
 
@@ -144,34 +351,45 @@ function handleClick(e) {
     const row = dropPiece(col);
 
     if (row !== -1) {
-        if (checkWinner(row, col)) {
-            if (currentPlayer === 1) {
-                winText.innerHTML = "Player Wins!";
-                playerWins = true;
-            } else {
-                winText.innerHTML = "AI Wins!";
-                AIWins = true;
-            }
-            gameOver();
-        } else if (checkDraw()) {
-            winText.innerHTML = "It's a draw";
-            gameOver();
-        } else {
-            currentPlayer = currentPlayer === 1 ? 2 : 1;
-            setTimeout(computerMove, 100);
-        }
+        winCondition();
     }
 }
 
-function gameOver() {
-    resultTable.className = 'result';
-    resetBtn.innerHTML = 'Play Again';
-    menuBtn.href = 'index.html';
-    menuBtn.innerHTML = 'Main Menu';
-    currentPlayer = 0; // game ends
-    const header = document.querySelector('h1');
-    header.after(resultTable);
-    resultTable.append(winText, resetBtn, menuBtn);
+function computerMove() {
+    const randomCol = findBestMove(AIGoFirst);
+    const row = dropPiece(randomCol);
+    if (row !== -1) {
+        winCondition();
+    }
+}
+
+function winCondition() {
+    if (checkWinner()) {
+        if (currentPlayer === 1) {
+            winText.innerHTML = "Player Wins!";
+            playerWins = true;
+        } else {
+            winText.innerHTML = "AI Wins!";
+            AIWins = true;
+            AIGoFirst = true;
+        }
+        gameOver();
+    } else if (checkDraw()) {
+        winText.innerHTML = "It's a draw";
+        if (AIGoFirst) {
+            waitText.innerHTML = `AI's turn`;
+        } else {
+            waitText.innerHTML = `Player's turn`;
+        }
+        gameOver();
+    } else {
+        currentPlayer = currentPlayer === 1 ? 2 : 1;
+        waitText.innerHTML = `Player's turn`;
+        if (currentPlayer == 2) {
+            waitText.innerHTML = `AI's turn`;
+            setTimeout(computerMove, 0);
+        }
+    }
 }
 
 function clearBoard() {
@@ -193,6 +411,17 @@ function removeOption() {
     resultTable.removeChild(winText);
     body.removeChild(resultTable);
     playGame();
+}
+
+function gameOver() {
+    resultTable.className = 'result';
+    resetBtn.innerHTML = 'Play Again';
+    menuBtn.href = 'index.html';
+    menuBtn.innerHTML = 'Main Menu';
+    currentPlayer = 0; // game ends
+    const header = document.querySelector('h1');
+    header.after(resultTable);
+    resultTable.append(winText, resetBtn, menuBtn);
 }
 
 createTable();
