@@ -5,6 +5,15 @@
   <meta charset="UTF-8">
   <title>CPSC481</title>
   <link rel="stylesheet" href="styles.css">
+  <script>
+    document.addEventListener("contextmenu", e => e.preventDefault(), false);
+    document.addEventListener("keydown", function (e) {
+      if (e.ctrlKey || e.keyCode == 123) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    });
+  </script>
 </head>
 
 <body>
