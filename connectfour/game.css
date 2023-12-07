@@ -1,0 +1,102 @@
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgb(253, 243, 224);
+    text-align: center;
+}
+
+.title {
+    text-align: center;
+}
+
+.result {
+    width: 460px;
+    animation: selected .4s infinite;
+    border: 1px solid black;
+}
+
+table {
+    margin: 20px auto;
+    display: table;
+    width: 800px;
+    padding: 23px;
+    border: 1px solid black;
+    border-radius: 5px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px, rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
+    border-spacing: 11px 11px;
+}
+
+.cell {
+    display: table-cell;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    border: 1px solid gray;
+    width: 90px;
+    height: 90px;
+    margin: 5rem;
+    border-radius: 50%;
+    border: 1px black 1px;
+    cursor: pointer;
+}
+
+col.hover {
+    background-color: white;
+}
+
+.player1 {
+    background-color: red;
+    border: none;
+    animation: drop 0.3s linear;
+}
+
+.player2 {
+    background-color: yellow;
+    border: none;
+    animation: drop 0.3s linear;
+}
+
+button,
+a {
+    text-decoration: none;
+    outline: none;
+    border: none;
+    font: inherit;
+    margin: 2em;
+    padding: 1rem 1rem 1rem 1rem;
+    background: rgb(235, 162, 37);
+    color: white;
+    border-radius: 0.25em;
+    box-shadow: 0 0 0.2em 0 orange;
+    text-align: center;
+    cursor: pointer;
+}
+
+@keyframes selected {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(-1deg);
+    }
+
+    50% {
+        transform: rotate(0deg);
+    }
+
+    75% {
+        transform: rotate(1deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes drop {
+    0% {
+        transform: translateY(-800px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
