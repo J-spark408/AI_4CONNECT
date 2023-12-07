@@ -417,7 +417,7 @@ function clearBoard() {
 function gameOver() {
     resultTable.className = 'result';
     resetBtn.innerHTML = 'Play Again';
-    menuBtn.href = 'index.html';
+    menuBtn.href = '../index.html';
     menuBtn.innerHTML = 'Main Menu';
     currentPlayer = 0;
     const header = document.querySelector('h1');
