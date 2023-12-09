@@ -182,7 +182,7 @@ function updateScore(player, AI) {
     }
     return points;
 }
-//https://github.com/marcomelilli/four-in-a-row-js-minimax/blob/master/board.js
+
 function evaluateState() {
     let score = 0;
 
