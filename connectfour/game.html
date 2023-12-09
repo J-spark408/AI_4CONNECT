@@ -6,15 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script defer src="game.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        document.addEventListener("contextmenu", e => e.preventDefault(), false);
-        document.addEventListener("keydown", function (e) {
-            if (e.ctrlKey || e.keyCode == 123) {
-                e.stopPropagation();
-                e.preventDefault();
-            }
-        });
-    </script>
     <link rel="stylesheet" href="game.css">
     <title>Connect Four</title>
 </head>

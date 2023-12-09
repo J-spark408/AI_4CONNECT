@@ -1,3 +1,4 @@
+// Global Variables and DOM
 const ROWS = 6;
 const COLS = 7;
 const player = 1;
@@ -17,7 +18,6 @@ const menuBtn = document.createElement('a');
 const winText = document.createElement('h2');
 const waitBox = document.createElement('div');
 const waitText = document.createElement('h2');
-
 
 function createTable() {
     body.append(table);
@@ -182,7 +182,7 @@ function updateScore(player, AI) {
     }
     return points;
 }
-
+//https://github.com/marcomelilli/four-in-a-row-js-minimax/blob/master/board.js
 function evaluateState() {
     let score = 0;
 
@@ -283,7 +283,7 @@ function findBestMove(AIFirst) {
     for (let col = 0; col < COLS; col++) {
         if (gameBoard[0][col] == 0) {
             let row = checkSpace(col);
-            if (AIFirst) {
+            if (AIFirst) { // If AI wins and goes first, it is set to be the maximizer
                 gameBoard[row][col] = computer;
                 let eval = miniMax(depth, true, -Infinity, Infinity);
                 gameBoard[row][col] = 0;
@@ -292,7 +292,7 @@ function findBestMove(AIFirst) {
                     move = col;
                 }
             }
-            if (!AIFirst) {
+            if (!AIFirst) { // Goes second, Minimizer
                 gameBoard[row][col] = player;
                 let eval = miniMax(depth, false, -Infinity, Infinity);
                 gameBoard[row][col] = 0;
@@ -303,7 +303,6 @@ function findBestMove(AIFirst) {
             }
         }
     }
-    currentPlayer = computer;
     return move;
 }
 
